@@ -10,8 +10,15 @@ module.exports = {
       var response = {};
       response.results = [];
 
+      models.messages.get()
+        .then(function(data) {
+          console.log(data);
+          res.set({'Content-Type': 'application/json'});
+          res.send(JSON.stringify(data));
+        })
+
       //if ('All Rooms' === decodeURIComponent(req.query.roomname)) {
-        response = serverData;
+        // response = serverData;
       //} else {
         //_.each(serverData.results, function(item){
          // if(item.roomname === decodeURIComponent(req.query.roomname)){
@@ -20,8 +27,6 @@ module.exports = {
         //});
       //}
 
-      res.set({'Content-Type': 'application/json'});
-      res.send(JSON.stringify(response));
     }, // a function which handles a get request for all messages
     post: function (req, res) {
       console.log("getting called?");
