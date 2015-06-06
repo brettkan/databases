@@ -55,7 +55,7 @@ app.clearMessages = function() {
 // prepends new messages retrieved from the server
 // and ignores messages with harmful code
 app.prependNewMessages = function(data) {
-
+  app.clearMessages();
   // for each message
   _.each(data.results, function(msg) {
     // check if the message has malicious codez
