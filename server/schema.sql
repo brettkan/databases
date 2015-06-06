@@ -3,13 +3,13 @@
 USE chat;
 
 CREATE TABLE users (
-  id INT NOT NULL,
+  id INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
   userName varchar(50)
 );
 
 CREATE TABLE messages (
-  id INT NOT NULL,
+  id INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (id),
   messageText varchar(255),
   userID INT,

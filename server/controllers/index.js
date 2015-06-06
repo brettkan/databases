@@ -31,8 +31,13 @@ module.exports = {
     post: function (req, res) {
       console.log("getting called?");
       var dataObj = req.body;
-      serverData.results.push(dataObj);
-      res.status(201).send('Data received');
+
+      //serverData.results.push(dataObj);
+      models.messages.post(dataObj)
+        .then(function(data){
+          console.log("IN CONTROLLER DATA IS "+data);
+          res.status(201).send(data);
+        });
       //writeToFile();
     } // a function which handles posting a message to the database
   },
