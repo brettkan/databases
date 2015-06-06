@@ -6,20 +6,24 @@ app.init = function() {
   // sets default room on initilization to show all messages
   this.currentRoom = "All Rooms";
   // this.server = 'https://api.parse.com/1/classes/chatterbox';
-  this.server = 'http://127.0.0.1:3000/classes/messages';
+  this.server = 'http://127.0.0.1:3000/classes/';
   this.mostRecentMessageTime = new Date("0");
   this.friendsList = [];
+  this.userID = null;
 };
 
 // sends the passed in message to the server
-app.send = function(message) {
+app.send = function(message, url) {
   $.ajax({
-    url: app.server,
+    url: app.server + url,
     type: 'POST',
     data: JSON.stringify(message),
     contentType: 'application/JSON',
     success: function(data) {
       console.log('chatterbox: Message sent');
+      if(url === "users"){
+        app.userID = data.insertId;
+      }
       app.fetch();
     },
     error: function (data) {
@@ -31,7 +35,7 @@ app.send = function(message) {
 // gets the most recent 100 messages from the server
 app.fetch = function() {
   $.ajax({
-    url: app.server,
+    url: app.server + 'messages',
     type: 'GET',
     success: function(data) {
       app.prependNewMessages(data);
@@ -58,8 +62,7 @@ app.prependNewMessages = function(data) {
     if (app.xssAttackPresent(msg)) {
       // console.log(msg);
     // otherwise as long as the message hasn't been added to the list of messages yet
-    } else if (new Date(msg.createdAt) > app.mostRecentMessageTime &&
-              app.checkRoom(msg.roomname)) {
+    } else if (app.checkRoom(msg.roomname)) {
       // prepend the message
       app.addMessage(msg);
     }
@@ -153,12 +156,24 @@ app.addFriend = function(friend) {
 
 // retrieves input values for username, text, and roomname
 // from corresponding DOM elements
+// then sends the message to the AJAX send
+//user
+app.userSubmit = function() {
+  var username = $('#username').val();
+  var message = {username: username};
+  console.log("about to send!!!");
+  app.send(message, 'users');
+};
+
+// retrieves input values for username, text, and roomname
+// from corresponding DOM elements
 // then sends the message to the AJAX send method
+//message
 app.handleSubmit = function() {
   var username = $('#username').val();
   var text = $('#message').val();
-  var message = {username: username, text: text, roomname: app.currentRoom, createdAt: new Date()};
-  app.send(message);
+  var message = {userID: app.userID, text: text, roomname: app.currentRoom};
+  app.send(message, 'messages');
 };
 
 // listens for a click event on usernames
@@ -167,6 +182,16 @@ var readyUsernameOnClick = function() {
   $("#chats").on('click', ".username", function(friend) {
   app.addFriend($(this).text());
   app.addFriendClass();
+  });
+};
+
+// listens for a click event on the user submit button
+// event triggers submit event
+var userNameSubmit = function() {
+  $("#user_send").on('submit', function(event) {
+    // prevents page refresh
+    event.preventDefault();
+    app.userSubmit();
   });
 };
 
@@ -230,6 +255,7 @@ $(document).ready(function() {
   readySubmitButtonClick();
   readySubmitButtonSubmit();
   readyGetMessagesClick();
+  userNameSubmit();
   // readyRetrieveUsername();
   readyMakeNewRoom();
   readyEnterRoom();

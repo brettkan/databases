@@ -13,6 +13,7 @@ module.exports = {
       models.messages.get()
         .then(function(data) {
           console.log(data);
+          data = {results: data};
           res.set({'Content-Type': 'application/json'});
           res.send(JSON.stringify(data));
         })
@@ -29,7 +30,6 @@ module.exports = {
 
     }, // a function which handles a get request for all messages
     post: function (req, res) {
-      console.log("getting called?");
       var dataObj = req.body;
 
       //serverData.results.push(dataObj);
@@ -44,8 +44,18 @@ module.exports = {
 
   users: {
     // Ditto as above
-    get: function (req, res) {},
-    post: function (req, res) {}
+    get: function (req, res) {
+      console.log('USERS GET IS WORKING')
+    },
+    post: function (req, res) {
+      var dataObj = req.body;
+      //serverData.results.push(dataObj);
+      models.users.post(dataObj)
+        .then(function(data){
+          res.status(201).send(data);
+        });
+      //writeToFile();
+    }
   }
 };
 

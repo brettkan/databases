@@ -20,7 +20,7 @@ module.exports = {
       });
     }, // a function which produces all the messages
     post: function (data) {
-      data = {"roomName":"ddd", "messageText":"ggggg" , "userID":2}
+      //data = {"roomName":"ddd", "messageText":"ggggg" , "userID":2}
       return new bluebird(function(resolve, reject) {
         var queryString = "INSERT INTO messages SET ? ";
         var queryArgs = [];
@@ -38,7 +38,21 @@ module.exports = {
   users: {
     // Ditto as above.
     get: function () {},
-    post: function () {}
+    post: function (data) {
+      //CONTINUE HERE!!!!!
+      //data = {"roomName":"ddd", "messageText":"ggggg" , "userID":2}
+      return new bluebird(function(resolve, reject) {
+        var queryString = "INSERT INTO users SET ? ";
+        var queryArgs = [];
+
+        dbConnection.query(queryString, data, function(err, users) {
+          if(err)
+            console.log(err);
+          console.log('THESE ARE THE USERS', users);
+          resolve(users);
+        })
+      });
+    }
   }
 };
 
