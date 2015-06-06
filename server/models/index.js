@@ -10,7 +10,8 @@ module.exports = {
   messages: {
     get: function () {
       return new bluebird(function(resolve, reject) {
-        var queryString = "SELECT * FROM messages";
+        var queryString = "SELECT users.id as userid, messages.id , users.username, messages.text FROM messages \
+        inner join users on users.id = messages.userID";
         var queryArgs = [];
 
         dbConnection.query(queryString, queryArgs, function(err, results) {
